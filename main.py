@@ -1,12 +1,16 @@
 import argparse
 import logging
+import os
 
-from pykeen.pipeline import pipeline, PipelineResult
+from pykeen.hpo import hpo_pipeline
+from pykeen.pipeline.api import pipeline_from_path, PipelineResult
+
+ARTIFACTS_PATH = "./artifacts"
 
 
 def init_logging() -> None:
     logging.basicConfig(
-        filename="eval.log",
+        filename=os.path.join(ARTIFACTS_PATH, "eval.log"),
         format='%(asctime)s %(levelname)-8s %(message)s',
         level=logging.INFO,
         datefmt='%Y-%m-%d %H:%M:%S')
@@ -23,6 +27,7 @@ def get_relevant_metrics(pipe_result: PipelineResult) -> str:
 
 
 if __name__ == "__main__":
+    os.mkdir(ARTIFACTS_PATH)
     init_logging()
     parser = argparse.ArgumentParser()
 
@@ -32,11 +37,18 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     for kgc_model in args.models:
-        result = pipeline(
+        hpo_result = hpo_pipeline(
+            n_trials=5,
             model=kgc_model,
             dataset=args.dataset,
-            device="cpu"
+            device="cpu",
+            n_jobs=-1  # Use all available CPUs
         )
 
-        eval_metrics = get_relevant_metrics(result)
+        model_artifacts_path = os.path.join(ARTIFACTS_PATH, kgc_model)
+        hpo_result_path = os.path.join(model_artifacts_path, "/hpo_result")
+        hpo_result.save_to_directory(hpo_result_path)
+        pip_result = pipeline_from_path(os.path.join(hpo_result_path, "/best_pipeline/pipeline_config.json"))
+
+        eval_metrics = get_relevant_metrics(pip_result)
         logging.info(f'[Model={kgc_model}] {eval_metrics}')
