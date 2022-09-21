@@ -27,7 +27,8 @@ def get_relevant_metrics(pipe_result: PipelineResult) -> str:
 
 
 if __name__ == "__main__":
-    os.mkdir(ARTIFACTS_PATH)
+    if not os.path.exists(ARTIFACTS_PATH):
+        os.mkdir(ARTIFACTS_PATH, mode=777)
     init_logging()
     parser = argparse.ArgumentParser()
 
