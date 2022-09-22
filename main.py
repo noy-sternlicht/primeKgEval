@@ -47,10 +47,10 @@ if __name__ == "__main__":
         )
 
         model_artifacts_path = os.path.join(ARTIFACTS_PATH, kgc_model)
-        hpo_result_path = os.path.join(model_artifacts_path, "/hpo_result")
+        hpo_result_path = os.path.join(model_artifacts_path, "hpo_result")
         hpo_result.save_to_directory(hpo_result_path)
-        pip_result = pipeline_from_path(os.path.join(hpo_result_path, "/best_pipeline/pipeline_config.json"))
-        pip_result.save_to_directory(os.path.join(model_artifacts_path, "/optimal_pipline_result"))
+        pip_result = pipeline_from_path(os.path.join(hpo_result_path, "best_pipeline/pipeline_config.json"))
+        pip_result.save_to_directory(os.path.join(model_artifacts_path, "optimal_pipline_result"))
 
         eval_metrics = get_relevant_metrics(pip_result)
         logging.info(f'[Model={kgc_model}] {eval_metrics}')
