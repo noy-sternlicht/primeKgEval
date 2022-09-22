@@ -43,7 +43,9 @@ if __name__ == "__main__":
             model=kgc_model,
             dataset=args.dataset,
             device="cpu",
-            n_jobs=-1  # Use all available CPUs
+            n_jobs=-1,  # Use all available CPUs
+            stopper='early',  # Terminate unpromising trials
+            training_kwargs=dict(num_epochs=10)
         )
 
         model_artifacts_path = os.path.join(ARTIFACTS_PATH, kgc_model)
