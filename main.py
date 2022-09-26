@@ -12,7 +12,7 @@ def init_logging() -> None:
     logging.basicConfig(
         filename=os.path.join(ARTIFACTS_PATH, "eval.log"),
         format='%(asctime)s %(levelname)-8s %(message)s',
-        level=logging.INFO,
+        level=logging.DEBUG,
         datefmt='%Y-%m-%d %H:%M:%S')
     logging.getLogger().addHandler(logging.StreamHandler())
 
