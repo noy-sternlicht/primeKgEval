@@ -28,7 +28,7 @@ def train_with_hpo(kgc_model_name: str, dataset_name: str, artifacts_path: str) 
         training_kwargs=dict(num_epochs=10),
         result_tracker='wandb',
         result_tracker_kwargs=dict(
-            project='primKgEval-testWandb',
+            project='primKgEval',
             tags=[f'{kgc_model}_{args.dataset}_hpo_' + datetime.now().strftime("%d/%m/%Y %H:%M:%S")],
             reinit=True
         ),
@@ -45,7 +45,7 @@ def train(kgc_model_name: str, dataset_name: str, artifacts_path: str) -> None:
         dataset=dataset_name,
         result_tracker='wandb',
         result_tracker_kwargs=dict(
-            project='primKgEval-testWandb',
+            project='primKgEval',
         ),
         metadata=dict(
             title=f'{kgc_model}_{args.dataset}_' + datetime.now().strftime("%d/%m/%Y %H:%M:%S")
