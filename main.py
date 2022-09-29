@@ -24,6 +24,7 @@ def train_with_hpo(kgc_model_name: str, dataset_name: str, artifacts_path: str) 
         n_trials=5,
         model=kgc_model_name,
         dataset=dataset_name,
+        sampler="RandomSampler",
         stopper='early',  # Terminate unpromising trials
         training_kwargs=dict(num_epochs=10),
         result_tracker='wandb',
