@@ -19,7 +19,7 @@ def init_logging() -> None:
 
 
 def train_with_hpo(kgc_model_name: str, dataset_name: str, artifacts_path: str) -> None:
-    logging.debug(f'Optimize hyper parameters for {kgc_model}')
+    logging.debug(f'Optimize hyper parameters for {kgc_model_name}')
     hpo_result = hpo_pipeline(
         n_trials=5,
         model=kgc_model_name,
@@ -29,7 +29,7 @@ def train_with_hpo(kgc_model_name: str, dataset_name: str, artifacts_path: str) 
         result_tracker='wandb',
         result_tracker_kwargs=dict(
             project='primKgEval',
-            tags=[f'{kgc_model}_{args.dataset}_hpo_' + datetime.now().strftime("%d/%m/%Y %H:%M:%S")],
+            tags=[f'{kgc_model_name}_{dataset_name}_hpo_' + datetime.now().strftime("%d/%m/%Y %H:%M:%S")],
             reinit=True
         ),
     )
@@ -39,7 +39,7 @@ def train_with_hpo(kgc_model_name: str, dataset_name: str, artifacts_path: str) 
 
 
 def train(kgc_model_name: str, dataset_name: str, artifacts_path: str) -> None:
-    logging.debug(f'Train {kgc_model} model (no HPO)')
+    logging.debug(f'Train {kgc_model_name} model (no HPO)')
     pip_result = pipeline(
         model=kgc_model_name,
         dataset=dataset_name,
@@ -48,7 +48,7 @@ def train(kgc_model_name: str, dataset_name: str, artifacts_path: str) -> None:
             project='primKgEval',
         ),
         metadata=dict(
-            title=f'{kgc_model}_{args.dataset}_' + datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            title=f'{kgc_model_name}_{dataset_name}_' + datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         )
     )
 
@@ -56,7 +56,7 @@ def train(kgc_model_name: str, dataset_name: str, artifacts_path: str) -> None:
     pip_result.save_to_directory(result_path)
 
 
-if __name__ == "__main__":
+def main():
     if not os.path.exists(ARTIFACTS_PATH):
         os.mkdir(ARTIFACTS_PATH, mode=777)
     init_logging()
@@ -74,3 +74,7 @@ if __name__ == "__main__":
             train_with_hpo(kgc_model, args.dataset, model_artifacts_path)
         else:
             train(kgc_model, args.dataset, model_artifacts_path)
+
+
+if __name__ == "__main__":
+    main()
