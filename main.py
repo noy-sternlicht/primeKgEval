@@ -69,9 +69,9 @@ def main():
     init_logging()
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--dataset", type=str)
-    parser.add_argument("--models", type=str, nargs='+')
-    parser.add_argument("--hpo", action='store_true', default=False)
+    parser.add_argument("--dataset", type=str, help="Dataset name")
+    parser.add_argument("--models", type=str, nargs='+', help="A list of KGE models to evaluate")
+    parser.add_argument("--hpo", action='store_true', default=False, help="Preforms hyperparameter optimization if set")
 
     args = parser.parse_args()
 
