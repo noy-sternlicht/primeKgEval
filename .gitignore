@@ -10,3 +10,4 @@ Scripts/
 pyvenv.cfg
 venv/
 artifacts/
+__pycache__
