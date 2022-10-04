@@ -11,7 +11,7 @@ activate () {
 }
 
 set_env_vars () {
-  PYSTOW_HOME=$PWD/myenv/.data
+  PYSTOW_HOME=$PWD/.data
   export PYSTOW_HOME
 }
 
