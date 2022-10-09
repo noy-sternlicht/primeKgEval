@@ -2,23 +2,37 @@ import argparse
 import logging
 import configparser
 import os
+import shutil
+
+import pystow
+
 from config import CONFIG_PATH
 from datetime import datetime
 
 from pykeen.hpo import hpo_pipeline
 from pykeen.pipeline.api import pipeline
 
+daytime = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
 config = configparser.ConfigParser()
 config.read(CONFIG_PATH)
 
 
-def init_logging() -> None:
+def init_logging(dataset_name: str) -> str:
+    art_path = os.path.join('.', config['DEFAULT']['artifact_dir'])
+    if not os.path.exists(art_path):
+        os.mkdir(art_path, mode=0o777)
+
+    run_path = os.path.join(art_path, f'Run_{dataset_name}_{daytime}')
+    os.mkdir(run_path, mode=0o777)
+
     logging.basicConfig(
-        filename=os.path.join(config['DEFAULT']['artifact_dir'], "eval.log"),
+        filename=os.path.join(run_path, "eval.log"),
         format='%(asctime)s %(levelname)-8s %(message)s',
         level=logging.DEBUG,
         datefmt='%Y-%m-%d %H:%M:%S')
     logging.getLogger().addHandler(logging.StreamHandler())
+
+    return run_path
 
 
 def train_with_hpo(kgc_model_name: str, dataset_name: str, artifacts_path: str) -> None:
@@ -33,7 +47,7 @@ def train_with_hpo(kgc_model_name: str, dataset_name: str, artifacts_path: str) 
         result_tracker='wandb',
         result_tracker_kwargs=dict(
             project=config['WANDB']['project_name'],
-            tags=[f'{kgc_model_name}_{dataset_name}_hpo_' + datetime.now().strftime("%d/%m/%Y %H:%M:%S")],
+            tags=[f'{kgc_model_name}_{dataset_name}_hpo_' + daytime],
             reinit=True
         ),
     )
@@ -53,7 +67,7 @@ def train(kgc_model_name: str, dataset_name: str, artifacts_path: str) -> None:
             project=config['WANDB']['project_name'],
         ),
         metadata=dict(
-            title=f'{kgc_model_name}_{dataset_name}_' + datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            title=f'{kgc_model_name}_{dataset_name}_' + daytime
         )
     )
 
@@ -61,12 +75,14 @@ def train(kgc_model_name: str, dataset_name: str, artifacts_path: str) -> None:
     pip_result.save_to_directory(result_path)
 
 
-def main():
-    artifact_path = os.path.join("./", config['DEFAULT']['artifact_dir'])
+def drain_pykeen_artifacts_to_model_dir(model_artifacts_path: str, dataset_name: str) -> None:
+    pykeen_artifacts_path = os.path.join(model_artifacts_path, "pykeen_artifacts")
+    os.mkdir(pykeen_artifacts_path, mode=0o777)
+    pykeen_datasets_dir_path = pystow.join('pykeen', 'datasets')
+    shutil.move(os.path.join(pykeen_datasets_dir_path, dataset_name.lower()), pykeen_artifacts_path)
 
-    if not os.path.exists(artifact_path):
-        os.mkdir(artifact_path, mode=777)
-    init_logging()
+
+def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--dataset", type=str, help="Dataset name")
@@ -75,12 +91,16 @@ def main():
 
     args = parser.parse_args()
 
+    run_logs_path = init_logging(args.dataset)
+
     for kgc_model in args.models:
-        model_artifacts_path = os.path.join(artifact_path, kgc_model)
+        model_artifacts_path = os.path.join(run_logs_path, kgc_model)
         if args.hpo:
             train_with_hpo(kgc_model, args.dataset, model_artifacts_path)
         else:
             train(kgc_model, args.dataset, model_artifacts_path)
+
+        drain_pykeen_artifacts_to_model_dir(model_artifacts_path, args.dataset)
 
 
 if __name__ == "__main__":
