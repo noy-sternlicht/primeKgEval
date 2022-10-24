@@ -42,7 +42,6 @@ def train_with_hpo(kgc_model_name: str, dataset_name: str, artifacts_path: str) 
         model=kgc_model_name,
         dataset=dataset_name,
         sampler=config['HPO']['sampler'],
-        stopper=config['HPO']['stopper'],
         training_kwargs=dict(num_epochs=config['TRAINING'].getint('n_epochs')),
         result_tracker='wandb',
         result_tracker_kwargs=dict(
