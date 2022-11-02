@@ -53,6 +53,8 @@ def train_with_hpo(kgc_model_name: str, dataset_name: str, artifacts_path: str) 
 
     hpo_result_path = os.path.join(artifacts_path, config['HPO']['result_dir'])
     hpo_result.save_to_directory(hpo_result_path)
+    hpo_result.replicate_best_pipeline(directory=os.path.join(artifacts_path, config['HPO']['result_dir']),
+                                       replicates=1)
 
 
 def train(kgc_model_name: str, dataset_name: str, artifacts_path: str) -> None:
