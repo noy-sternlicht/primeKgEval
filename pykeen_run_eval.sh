@@ -17,4 +17,4 @@ set_env_vars () {
 
 activate
 set_env_vars
-python main.py --dataset "Nations" --models "TransE"
+python src/main.py --dataset "Nations" --models "TransE"
