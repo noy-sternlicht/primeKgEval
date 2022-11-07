@@ -18,7 +18,7 @@ config.read(CONFIG_PATH)
 
 
 def init_logging(dataset_name: str) -> str:
-    art_path = os.path.join('..', config['DEFAULT']['artifact_dir'])
+    art_path = os.path.join('.', config['DEFAULT']['artifact_dir'])
     if not os.path.exists(art_path):
         os.mkdir(art_path, mode=0o777)
 
