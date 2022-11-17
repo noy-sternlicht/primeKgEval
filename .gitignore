@@ -10,4 +10,5 @@ Scripts/
 pyvenv.cfg
 venv/
 artifacts/
+Data/primekg/kg.csv
 __pycache__
