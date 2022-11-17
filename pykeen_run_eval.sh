@@ -1,13 +1,13 @@
 #!/bin/bash -x
 
-#SBATCH --time=00:02:00
+#SBATCH --time=144:00:00
 #SBATCH --ntasks=1
-#SBATCH --gres=gpu:a100-1-10
+#SBATCH --gres=gpu:a5000
 
 PWD=`pwd`
 echo $PWD
 activate () {
-    . $PWD/myenv/bin/activate
+    . $PWD/ve/bin/activate
 }
 
 set_env_vars () {
@@ -17,4 +17,4 @@ set_env_vars () {
 
 activate
 set_env_vars
-python src/main.py --dataset "Nations" --models "TransE"
+python src/main.py --dataset "PrimeKG" --models "TransE" --hpo
