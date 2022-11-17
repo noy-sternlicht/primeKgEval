@@ -8,13 +8,13 @@ config['DEFAULT'] = {
     'artifact_dir': 'artifacts'
 }
 config['WANDB'] = {
-    'project_name': 'primKgEval-testWandb'
+    'project_name': 'primKgEval'
 }
 config['TRAINING'] = {
-    'n_epochs': '10'
+    'n_epochs': '15'
 }
 config['HPO'] = {
-    'n_trials': '5',
+    'n_trials': '10',
     'sampler': 'RandomSampler',
     'stopper': 'early',  # Terminate unpromising trials
     'result_dir': 'hpo_result'
