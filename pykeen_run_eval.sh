@@ -2,7 +2,7 @@
 
 #SBATCH --time=144:00:00
 #SBATCH --ntasks=1
-#SBATCH --gres=gpu:a5000
+#SBATCH --gres=gpu:1,vmem:20g
 
 PWD=`pwd`
 echo $PWD

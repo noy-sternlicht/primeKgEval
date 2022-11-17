@@ -1,8 +1,8 @@
 #!/bin/bash -x
 
 #SBATCH --time=144:00:00
-#SBATCH --ntasks=1
-#SBATCH --gres=gpu:a5000
+#SBATCH --ntasks=5
+#SBATCH --gres=gpu:2,vmem:10g
 
 
 PWD=`pwd`
@@ -15,4 +15,4 @@ activate () {
 activate
 NOW=$(date +"%F_%H-%M-%S")
 LOGFILE="artifacts/log-libkge-rescal-$NOW.log"
-libKGE/kge/kge/cli.py start libkge_configs/libkge_train_config_rescal.yaml | tee "$LOGFILE"
+libKGE/kge/kge/cli.py start libkge_configs/libkge_train_config_rescal.yaml --search.device_pool cuda:0,cuda:1 --search.num_workers 10 | tee "$LOGFILE"

@@ -1,8 +1,8 @@
 #!/bin/bash -x
 
-#SBATCH --time=70:00:00
-#SBATCH --ntasks=1
-#SBATCH --gres=gpu:a100-3-40
+#SBATCH --time=144:00:00
+#SBATCH --ntasks=5
+#SBATCH --gres=gpu:2,vmem:10g
 
 
 PWD=`pwd`
@@ -14,5 +14,5 @@ activate () {
 
 activate
 NOW=$(date +"%F_%H-%M-%S")
-LOGFILE="artifacts/log-libkge-$NOW.log"
-libKGE/kge/kge/cli.py start libkge_configs/libkge_train_config_rotate.yaml | tee "$LOGFILE"
+LOGFILE="artifacts/log-libkge-rotate-$NOW.log"
+libKGE/kge/kge/cli.py start libkge_configs/libkge_train_config_rotate.yaml --search.device_pool cuda:0,cuda:1 --search.num_workers 10 | tee "$LOGFILE"
